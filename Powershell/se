@@ -1,0 +1,23 @@
+###########################################################
+# AUTHOR  : Andrew Silkroski 
+# DATE    : 1 May 2017 
+# EDIT    : 1 May 2017
+# COMMENT : First release candidate. Soft-Deletes (recoverable)
+# emails under a compliance search.
+# VERSION : 1.0
+###########################################################
+
+# CHANGELOG
+# Version 1.0: First usable version.
+# FUTURE ENHANCEMENTS
+# -Error checking
+# -Additional actions or action drop down
+
+$Session = New-PSSession -ConfigurationName Microsoft.Exchange -ConnectionUri https://ps.compliance.protection.outlook.com/powershell-liveid -Credential $UserCredential -Authentication Basic -AllowRedirection 
+$Search = Read-Host 'Please enter the name of the saved compliance search. This must match EXACTLY.' 
+Import-PSSession $Session -AllowClobber -DisableNameChecking 
+$Host.UI.RawUI.WindowTitle = $UserCredential.UserName + " (Office 365 Security & Compliance Center)"
+Write-Host "When you're ready to proceed, press any key to continue. Ctrl+C to cancel."
+$x = $host.UI.RawUI.ReadKey("NoEcho,IncludeKeyUp")
+New-ComplianceSearchAction -SearchName "$Search" -Purge -PurgeType SoftDelete -Verbose 
+##
