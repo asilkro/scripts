@@ -14,7 +14,7 @@
 #Set-ExecutionPolicy RemoteSigned -Verbose
 
 #####
-## This part is useful but useful for those not familiar with Powershell.
+## This is the main functional piece. It prompts for credentials, creates a remote session and imports it.
 #####
 $UserCredential = Get-Credential -Message 'Please enter your Exchange Online/Office 365 credentials. This must be an administrator account.'
 $Session = New-PSSession -ConfigurationName Microsoft.Exchange -ConnectionUri https://outlook.office365.com/powershell-liveid/ -Credential $UserCredential -Authentication Basic -AllowRedirection
