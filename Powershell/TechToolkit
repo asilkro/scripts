@@ -1,0 +1,167 @@
+####
+## Name: Andrew's Toolkit
+## Version: 0.01a
+## Created: 1 August 2018
+## Modified: 15 August 2018
+## Purpose: Combine all of the separate scripts used on a regular basis into one tool with all the important functions.
+## Goals: Include O365 content search removal, Exchange online permission review and modification
+## Next version roadmap: make menus SWITCH (ie O365 currently shows O365menu & mainmenu when selected)
+####
+
+##################################################################
+
+ #     #                                                         
+ #  #  #  ####  #####  #    #  ####  #####    ##    ####  ###### 
+ #  #  # #    # #    # #   #  #      #    #  #  #  #    # #      
+ #  #  # #    # #    # ####    ####  #    # #    # #      #####  
+ #  #  # #    # #####  #  #        # #####  ###### #      #      
+ #  #  # #    # #   #  #   #  #    # #      #    # #    # #      
+  ## ##   ####  #    # #    #  ####  #      #    #  ####  ###### 
+
+##################################################################                                                                                                   
+
+#####
+##Core Functions
+#####
+
+
+## Global Variables ##
+#$foregroundColor = 'Green' ##NEED TO FIX THIS
+$ScriptVersion = "0.01a"
+#$ActiveDirectoryServer= "server.contoso.com"
+
+
+## Ask for selection ##
+function selection {
+Write-Host
+Write-Host
+Read-Host 'Please make a selection'
+}
+
+##Logo and Version
+function logo {
+Write-Host '
+ #######                              #######                                           
+    #     ######   ####   #    #         #      ####    ####   #       #    #  #  ##### 
+    #     #       #    #  #    #         #     #    #  #    #  #       #   #   #    #   
+    #     #####   #       ######         #     #    #  #    #  #       ####    #    #   
+    #     #       #       #    #         #     #    #  #    #  #       #  #    #    #   
+    #     #       #    #  #    #         #     #    #  #    #  #       #   #   #    #   
+    #     ######   ####   #    #         #      ####    ####   ######  #    #  #    #   
+    ' -ForegroundColor DarkCyan
+Write-Host "------------"
+Write-Host -NoNewLine "Version:"
+Write-Host -ForegroundColor Cyan " $ScriptVersion"
+Write-Host "------------"
+Write-Host -ForegroundColor Red 'Press Ctrl-C to exit this app at any time.'
+}
+
+## Main Menu with categories
+function mainmenu {
+Write-Host `n "
+╔══════════════════╦═════╦═════════════╦═════╗
+║     Category     ║ Key ║    Other    ║ Key ║
+╠══════════════════╬═════╬═════════════╬═════╣
+║ Office365        ║ O3  ║ Settings /  ║ SC  ║
+║                  ║     ║   Config    ║     ║
+║ Active Directory ║ AD  ║ Help        ║ HE  ║
+║ Okta / SSO       ║ OK  ║ Quit        ║ Q   ║
+╚══════════════════╩═════╩═════════════╩═════╝"
+}
+
+##O365 Menu
+function O365menu {
+Clear-Host
+Write-Host `n "
+╔══════════════════╦═════╗
+║    O365 Menu     ║ Key ║
+╠══════════════════╬═════╣
+║ Set Credentials  ║  C  ║
+║ Connect Exchange ║  E  ║
+║ Connect Security ║  S  ║
+║ ---------------- ║  -  ║
+║ Return to main   ║  M  ║
+╚══════════════════╩═════╝"
+}
+
+##Security Session
+function securitysession {
+$SecurityCredential = Get-Credential -Message 'Please enter your Security and Compliance Center / Office 365 credentials. This must be a security/compliance admin account.'
+$SecuritySession = New-PSSession -ConfigurationName Microsoft.Exchange -ConnectionUri https://ps.compliance.protection.outlook.com/powershell-liveid -Credential $SecurityCredential -Authentication Basic -AllowRedirection
+}
+function load-securitysession {
+Import-PSSession $SecuritySession
+}
+
+##Exchange Online Session
+function exchangesession {
+$ExchangeCredential = Get-Credential -Message 'Please enter your Exchange Online / Office 365 credentials. This must be an Exchange Online admin account.'
+$ExchangeSession = New-PSSession -ConfigurationName Microsoft.Exchange -ConnectionUri https://outlook.office365.com/powershell-liveid/ -Credential $UserCredential -Authentication Basic -AllowRedirection
+}
+function load-exchangesession {
+Import-PSSession $ExchangeSession
+}
+
+function startup {
+loading
+logo
+mainmenu
+}
+
+#####################################################################
+
+    #                                                               
+   # #   #####  #####  #      #  ####    ##   ##### #  ####  #    # 
+  #   #  #    # #    # #      # #    #  #  #    #   # #    # ##   # 
+ #     # #    # #    # #      # #      #    #   #   # #    # # #  # 
+ ####### #####  #####  #      # #      ######   #   # #    # #  # # 
+ #     # #      #      #      # #    # #    #   #   # #    # #   ## 
+ #     # #      #      ###### #  ####  #    #   #   #  ####  #    # 
+
+#####################################################################                                                                    
+cls
+Write-Host "########################################################################################"
+logo
+Write-Host "########################################################################################"
+do{
+mainmenu
+$menuselect = Read-Host -Prompt "Select an option from above"
+
+ switch ($menuselect)
+   {
+    'O' {
+        Clear-Host
+        'You have selected Office365'
+        Clear-Host     
+            O365menu
+   }'A'{
+        Clear-Host        
+        'You have selected Active Directory'
+
+   }'OK'{
+        Clear-Host
+        'You have selected Okta'
+   }'SC'{
+        Clear-Host
+        'You have selected Settings'
+   }'H'{
+        Clear-Host
+        'Need some help? No problem.'    
+   }'Q'{
+        return
+        }
+    }
+ }
+ until ($menuselect -ceq 'q')
+
+########################################################################################
+
+ #######                                   #######                                     
+ #       #    # #####      ####  ######       #     ####   ####  #      #    # # ##### 
+ #       ##   # #    #    #    # #            #    #    # #    # #      #   #  #   #   
+ #####   # #  # #    #    #    # #####        #    #    # #    # #      ####   #   #   
+ #       #  # # #    #    #    # #            #    #    # #    # #      #  #   #   #   
+ #       #   ## #    #    #    # #            #    #    # #    # #      #   #  #   #   
+ ####### #    # #####      ####  #            #     ####   ####  ###### #    # #   #  
+
+########################################################################################
