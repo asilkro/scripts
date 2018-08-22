@@ -1,11 +1,10 @@
 ####
 ## Name: Andrew's Toolkit
-## Version: 0.01a
+## Version: 0.02a
 ## Created: 1 August 2018
-## Modified: 15 August 2018
+## Modified: 22 August 2018
 ## Purpose: Combine all of the separate scripts used on a regular basis into one tool with all the important functions.
-## Goals: Include O365 content search removal, Exchange online permission review and modification
-## Next version roadmap: make menus SWITCH (ie O365 currently shows O365menu & mainmenu when selected)
+## Includes O365 content search removal, Exchange online  
 ####
 
 ##################################################################
@@ -27,11 +26,11 @@
 
 ## Global Variables ##
 #$foregroundColor = 'Green' ##NEED TO FIX THIS
-$ScriptVersion = "0.01a"
+$ScriptVersion = "0.02a"
 #$ActiveDirectoryServer= "server.contoso.com"
 
 
-## Ask for selection ##
+## Ask for selection
 function selection {
 Write-Host
 Write-Host
@@ -53,7 +52,7 @@ Write-Host "------------"
 Write-Host -NoNewLine "Version:"
 Write-Host -ForegroundColor Cyan " $ScriptVersion"
 Write-Host "------------"
-Write-Host -ForegroundColor Red 'Press Ctrl-C to exit this app at any time.'
+Write-Host -ForegroundColor Red 'Use Q or Ctrl-C to exit this app at any time.'
 }
 
 ## Main Menu with categories
@@ -86,7 +85,7 @@ Write-Host `n "
 
 ##Security Session
 function securitysession {
-$SecurityCredential = Get-Credential -Message 'Please enter your Security and Compliance Center / Office 365 credentials. This must be a security/compliance admin account.'
+$SecurityCredential = Get-Credential -Message 'Please enter your Office 365 credentials. This must be a Security & Compliance admin account.'
 $SecuritySession = New-PSSession -ConfigurationName Microsoft.Exchange -ConnectionUri https://ps.compliance.protection.outlook.com/powershell-liveid -Credential $SecurityCredential -Authentication Basic -AllowRedirection
 }
 function load-securitysession {
@@ -95,7 +94,7 @@ Import-PSSession $SecuritySession
 
 ##Exchange Online Session
 function exchangesession {
-$ExchangeCredential = Get-Credential -Message 'Please enter your Exchange Online / Office 365 credentials. This must be an Exchange Online admin account.'
+$ExchangeCredential = Get-Credential -Message 'Please enter your Office 365 credentials. This must be an Exchange Online admin account.'
 $ExchangeSession = New-PSSession -ConfigurationName Microsoft.Exchange -ConnectionUri https://outlook.office365.com/powershell-liveid/ -Credential $UserCredential -Authentication Basic -AllowRedirection
 }
 function load-exchangesession {
@@ -103,7 +102,6 @@ Import-PSSession $ExchangeSession
 }
 
 function startup {
-loading
 logo
 mainmenu
 }
@@ -123,36 +121,72 @@ cls
 Write-Host "########################################################################################"
 logo
 Write-Host "########################################################################################"
+##Main Menu
 do{
 mainmenu
 $menuselect = Read-Host -Prompt "Select an option from above"
 
  switch ($menuselect)
-   {
-    'O' {
+  {
+  'O3' {
         Clear-Host
         'You have selected Office365'
         Clear-Host     
-            O365menu
-   }'A'{
+        O365menu}
+   'AD'{
         Clear-Host        
-        'You have selected Active Directory'
-
-   }'OK'{
+        'You have selected Active Directory'}
+   'OK'{
         Clear-Host
         'You have selected Okta'
-   }'SC'{
-        Clear-Host
-        'You have selected Settings'
-   }'H'{
+   }
+   'SC'{
+    Clear-Host
+    Write-Host 'You have selected Settings'
+   }
+   'HE'{
         Clear-Host
         'Need some help? No problem.'    
-   }'Q'{
+   }
+   'Q'{
         return
         }
     }
  }
- until ($menuselect -ceq 'q')
+until (($menuselect -ceq 'Q') -or ($menuselect -ceq 'HE')-or ($menuselect -ceq 'SC') -or ($menuselect -ceq 'OK') -or ($menuselect -ceq 'AD') -or ($menuselect -ceq 'O3'))
+##O365 Menu
+do{
+o365menu
+$menuselect = Read-Host -Prompt "Select an option from above"
+
+ switch ($menuselect)
+   {
+   'M'{
+        Clear-Host
+        Write-Host 'Returning to main menu.'     
+        mainmenu
+   }
+   'E'{
+        Clear-Host        
+        'You have selected Exchange'
+        exchangesession
+        load-exchangesession
+        ##Go to Exchange Menu##
+
+   }
+   'S'{
+        Clear-Host        
+        'You have selected Security Session'
+        securitysession
+        load-securitysession
+        ##Go to Security Menu##    
+   }
+   'Q'{
+        return
+        }
+    }
+ }
+until (($menuselect -ceq "QEMS"))
 
 ########################################################################################
 
